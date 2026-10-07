@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+@import '@microstore/ui/theme.css';
+
+/* Varre todos os apps + design system: cada build gera o MESMO conjunto de
+   utilitários na MESMA ordem, para que regras de breakpoint (`xl:flex` etc.)
+   de uma folha nunca sejam derrotadas pelo `.hidden` base de outra folha
+   (mesma especificidade → vence a última folha na ordem do documento). */
+@source '../../../packages/ui/src';
+@source '../../shell/src';
+@source '../../catalog/src';
+@source '../../cart/src';
+@source '../../checkout/src';
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}

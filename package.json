@@ -1,0 +1,31 @@
+{
+    "name":  "poc-microfrontends",
+    "version":  "0.1.0",
+    "private":  true,
+    "type":  "module",
+    "description":  "POC de microfrontends com Vite, React, Tailwind e Module Federation 2.0",
+    "workspaces":  [
+                       "apps/*",
+                       "packages/*"
+                   ],
+    "scripts":  {
+                    "dev":  "concurrently -k -n shell,catalog,cart,checkout -c cyan,green,yellow,magenta \"npm run dev -w @microstore/shell\" \"npm run dev -w @microstore/catalog\" \"npm run dev -w @microstore/cart\" \"npm run dev -w @microstore/checkout\"",
+                    "build":  "npm run build --workspaces --if-present",
+                    "preview":  "concurrently -n shell,catalog,cart,checkout -c cyan,green,yellow,magenta \"npm run preview -w @microstore/shell\" \"npm run preview -w @microstore/catalog\" \"npm run preview -w @microstore/cart\" \"npm run preview -w @microstore/checkout\"",
+                    "typecheck":  "npm run typecheck --workspaces --if-present",
+                    "lint":  "eslint .",
+                    "test":  "vitest run",
+                    "smoke":  "node scripts/smoke.mjs"
+                },
+    "devDependencies":  {
+                            "@eslint/js":  "^10.0.1",
+                            "@types/node":  "^24",
+                            "concurrently":  "^10.0.5",
+                            "eslint":  "^10.12.0",
+                            "globals":  "^17.13.0",
+                            "playwright-core":  "^1.63.0",
+                            "typescript":  "^5.9.3",
+                            "typescript-eslint":  "^8.71.1",
+                            "vitest":  "^5.0.3"
+                        }
+}
