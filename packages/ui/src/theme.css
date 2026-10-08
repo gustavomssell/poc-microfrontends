@@ -75,6 +75,8 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-link: var(--link);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -116,6 +118,8 @@
   --accent: #eef2ff;
   --accent-foreground: #4338ca;
   --destructive: #dc2626;
+  --success: #047857;
+  --link: #4f46e5;
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #4f46e5;
@@ -152,7 +156,9 @@
   --muted-foreground: #94a3b8;
   --accent: #312e81;
   --accent-foreground: #c7d2fe;
-  --destructive: #ef4444;
+  --destructive: #f87171;
+  --success: #10b981;
+  --link: #a5b4fc;
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.15);
   --ring: #818cf8;
@@ -190,5 +196,15 @@
       var(--primary) 24%,
       transparent
     );
+  }
+
+  /*
+   * Modo avaliador: quando ativo (classe `telemetry-off` no <html>), esconde
+   * a telemetria de arquitetura marcada com [data-telemetry] — chips no
+   * header, portas no rodapé e badges "remote · :porta". Como a classe vive
+   * no documento compartilhado, vale para shell e remotes sem JS extra.
+   */
+  html.telemetry-off [data-telemetry] {
+    display: none !important;
   }
 }

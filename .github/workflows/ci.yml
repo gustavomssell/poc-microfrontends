@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  quality:
+    name: typecheck · lint · test · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  smoke:
+    name: smoke E2E (dev servers)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # O smoke usa channel "msedge" do playwright-core (presente no
+      # windows-latest) e espera os 4 dev servers em :5000-:5003.
+      - name: Sobe os 4 apps e roda o smoke
+        shell: bash
+        run: |
+          npm run dev > dev.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:5000 >/dev/null 2>&1; then
+              break
+            fi
+            sleep 2
+          done
+          node scripts/smoke.mjs
+      - name: Log dos dev servers
+        if: failure()
+        shell: pwsh
+        run: if (Test-Path dev.log) { Get-Content dev.log -Tail 200 }
+
+  deploy:
+    name: deploy GitHub Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [quality, smoke]
+    # Só em push para master — PRs não publicam nada.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Mesmo esquema do rehearsal local: prefixo de router igual em todos os
+      # apps, base do Vite por app e entries apontando para os remotes publicados.
+      - name: Build das 4 apps e montagem do site
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPO="${GITHUB_REPOSITORY#*/}"
+          OWNER="$GITHUB_REPOSITORY_OWNER"
+          # Site de projeto vive em /<repo>/; se o repo é "owner.github.io", é raiz.
+          if [ "$REPO" = "${OWNER}.github.io" ]; then
+            BASE=""
+            PREFIX=""
+          else
+            BASE="$REPO/"
+            PREFIX="/$REPO"
+          fi
+          SITE_URL="https://${OWNER}.github.io/${BASE}"
+          export VITE_ROUTER_PREFIX="$PREFIX"
+          export VITE_BASE_URL="/$BASE"
+          export VITE_CATALOG_ENTRY="${SITE_URL}_remotes/catalog/remoteEntry.js"
+          export VITE_CART_ENTRY="${SITE_URL}_remotes/cart/remoteEntry.js"
+          export VITE_CHECKOUT_ENTRY="${SITE_URL}_remotes/checkout/remoteEntry.js"
+          npm run build -w apps/shell
+          for app in catalog cart checkout; do
+            export VITE_BASE_URL="/${BASE}_remotes/$app/"
+            npm run build -w "apps/$app"
+          done
+          SITE="$RUNNER_TEMP/pages-site"
+          mkdir -p "$SITE"
+          cp -r apps/shell/dist/. "$SITE/"
+          for app in catalog cart checkout; do
+            mkdir -p "$SITE/_remotes/$app"
+            cp -r "apps/$app/dist/." "$SITE/_remotes/$app/"
+          done
+          # Fallback SPA do Pages: URL desconhecida devolve 404 com o shell.
+          cp "$SITE/index.html" "$SITE/404.html"
+          # Checagens do artefato antes de publicar.
+          grep -q "/${BASE}assets/" "$SITE/index.html"
+          grep -rl "_remotes/catalog/remoteEntry.js" "$SITE/assets/" > /dev/null
+          test -f "$SITE/404.html"
+          for app in catalog cart checkout; do
+            test -f "$SITE/_remotes/$app/remoteEntry.js"
+          done
+          echo "SITE=$SITE" >> "$GITHUB_ENV"
+          echo "SITE_URL=$SITE_URL" >> "$GITHUB_ENV"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.SITE }}
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verifica o site publicado
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.deployment.outputs.page_url }}"
+          code() { curl -s -L -o /dev/null -w '%{http_code}' "$1"; }
+          for i in 1 2 3 4 5; do
+            [ "$(code "$URL")" = "200" ] && break
+            sleep 5
+          done
+          [ "$(code "$URL")" = "200" ]
+          [ "$(code "${URL}_remotes/catalog/remoteEntry.js")" = "200" ]
+          [ "$(code "${URL}_remotes/cart/remoteEntry.js")" = "200" ]
+          [ "$(code "${URL}_remotes/checkout/remoteEntry.js")" = "200" ]
+          # Deep link sem arquivo → 404 com o shell (fallback SPA).
+          [ "$(code "${URL}catalog/kb-aurora")" = "404" ]
+          curl -s "${URL}catalog/kb-aurora" | grep -q "MicroStore"

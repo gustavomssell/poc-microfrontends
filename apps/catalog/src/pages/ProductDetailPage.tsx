@@ -18,7 +18,6 @@ import {
   EmptyMedia,
   MfeLink,
   Price,
-  productGradient,
 } from '@microstore/ui';
 import { useState } from 'react';
 import { AddToCartButton } from '../components/AddToCartButton';
@@ -60,17 +59,14 @@ export function ProductDetailPage() {
     <div data-mfe="catalog" className="flex flex-col gap-6">
       <Link
         to="/"
-        className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+        className="inline-flex items-center gap-1 text-sm font-semibold text-link hover:underline"
       >
         <ArrowLeftIcon aria-hidden />
         Voltar ao catálogo
       </Link>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div
-          className="relative h-64 rounded-3xl sm:h-80"
-          style={{ background: productGradient(product.hue) }}
-        >
+        <div className="relative h-64 rounded-3xl bg-accent sm:h-80">
           <span
             className="absolute inset-0 grid place-items-center text-7xl"
             aria-hidden
@@ -96,7 +92,7 @@ export function ProductDetailPage() {
               </div>
               <div>
                 <dt className="text-muted-foreground">Envio</dt>
-                <dd className="font-semibold text-success-600">Imediato</dd>
+                <dd className="font-semibold text-success">Imediato</dd>
               </div>
             </dl>
 
@@ -133,7 +129,7 @@ export function ProductDetailPage() {
 
             <MfeLink
               to="/cart"
-              className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary hover:underline"
+              className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-link hover:underline"
             >
               Ir para o carrinho
               <ArrowRightIcon aria-hidden />

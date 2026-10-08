@@ -9,7 +9,7 @@ export function Footer() {
           — POC de microfrontends com Vite + React + Tailwind + Module
           Federation 2.0
         </p>
-        <p className="font-mono text-xs">
+        <p className="font-mono text-xs" data-telemetry>
           shell:5000 ·{' '}
           {Object.values(REMOTES)
             .map((r) => `${r.name}:${r.port}`)

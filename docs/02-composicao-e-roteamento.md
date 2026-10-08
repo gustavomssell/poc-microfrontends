@@ -77,6 +77,13 @@ shell (BrowserRouter do shell)
 
 Isso é o que permite **o mesmo código** rodar nos dois modos sem ajuste.
 
+Em deploy (GitHub Pages) o app vive em `/<repo>/` e não na raiz — daí o
+prefixo `VITE_ROUTER_PREFIX` (mesmo valor em todos os apps, vazio em
+dev): o shell aplica no `basename` e nos basenames dos remotes,
+`MfeLink`/`softNavigate` prefixam cada `pushState`; no standalone, o
+`main.tsx` deriva o basename do `base` do Vite (`VITE_BASE_URL`).
+Detalhes e layout do site em [07 — Deploy](./07-deploy-e-versionamento.md).
+
 ## Três regras de navegação
 
 | Contexto | Componente | Exemplo | Por quê |

@@ -82,7 +82,8 @@ prova de que o CSS do remote chegou ao host em produção.
    app — sem importar nada além do `styles.css` que já existe.
 
 Tokens atuais: escalas `ink` (6 passos: 50/100/200/500/700/900), `brand`
-(indigo), `success`, `warning`, `danger` + tipografia system-ui (stacks
+(indigo), `success`, `warning`, `danger` + tokens semânticos `--success` e
+`--link` (contraste AA nos dois modos) + tipografia system-ui (stacks
 `--font-sans`/`--font-mono` no mesmo bloco).
 
 Próximo: [06 — Resiliência e observabilidade](./06-resiliencia-e-observabilidade.md).

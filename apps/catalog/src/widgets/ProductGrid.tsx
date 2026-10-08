@@ -42,7 +42,7 @@ export default function ProductGrid({ title = 'Destaques', limit = 4 }: ProductG
             <CardContent className="flex flex-1 flex-col p-3">
               <Link
                 to={`/catalog/${product.id}`}
-                className="text-sm font-medium text-foreground hover:text-primary"
+                className="text-sm font-medium text-foreground hover:text-link"
               >
                 {product.name}
               </Link>

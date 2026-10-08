@@ -143,6 +143,10 @@ Os avisos de console exclusivos de dev (React 19 × bridge-react/next-themes)
 são filtrados por serem ausentes na build de produção — ver
 [docs/06](docs/06-resiliencia-e-observabilidade.md).
 
+O mesmo conjunto (typecheck, lint, unit e smoke) roda no CI a cada
+push/PR — `.github/workflows/ci.yml` — e um push em `master` publica o
+site no GitHub Pages (job `deploy`, após os dois verdes).
+
 ## Documentação
 
 | Doc | Responde |
@@ -158,8 +162,11 @@ são filtrados por serem ausentes na build de produção — ver
 
 ## Limitações conhecidas
 
-- **POC sem backend**: pagamento/pedido são simulados; sem SSR, auth,
-  CI/CD ou CDN real ([PLANO.md](PLANO.md) §1).
+- **POC sem backend**: pagamento/pedido são simulados; sem SSR nem auth
+  ([PLANO.md](PLANO.md) §1) — o CI (typecheck, lint, unit, smoke) roda no
+  GitHub Actions e o push em `master` publica em
+  `https://gustavomssell.github.io/poc-microfrontends/`
+  ([docs/07](docs/07-deploy-e-versionamento.md)).
 - O fallback de remote derrubado oferece **recarregar a página** — não há
   retry in-place (o `React.lazy` cacheia a falha).
 - Em desenvolvimento, o React 19 emite 2 avisos de console
@@ -167,3 +174,7 @@ são filtrados por serem ausentes na build de produção — ver
   na build de produção** — [docs/06](docs/06-resiliencia-e-observabilidade.md).
 - A navegação **interna** de um remote não repinta o `NavLink` ativo do
   shell até o próximo popstate (cosmético) — [docs/02](docs/02-composicao-e-roteamento.md).
+
+## Licença
+
+MIT — ver [LICENSE](LICENSE).

@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from 'react';
-import { softNavigate } from '../lib/navigation.ts';
+import { softNavigate, withDeployPrefix } from '../lib/navigation.ts';
 
 interface MfeLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   /** Caminho ABSOLUTO fora do namespace do remote (ex.: "/checkout"). */
@@ -36,7 +36,7 @@ export function MfeLink({ to, children, onClick, ...rest }: MfeLinkProps) {
   };
 
   return (
-    <a href={to} onClick={handleClick} {...rest}>
+    <a href={withDeployPrefix(to)} onClick={handleClick} {...rest}>
       {children}
     </a>
   );

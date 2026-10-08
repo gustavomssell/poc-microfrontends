@@ -15,6 +15,7 @@ conta própria — assim as versões e flags nunca divergem (a causa nº 1 de
 | `react` | `singleton: true` | Duas cópias = "Invalid hook call" |
 | `react-dom` | `singleton: true` | idem |
 | `react-dom/` | `singleton: true` | prefixo com barra cobre submódulos (`react-dom/client`) |
+| `react/jsx-runtime` | `singleton: true, eager: true` | consumido **só** pelos deps pré-bundlados (base-ui), nunca por source file; sem `eager` o materialize não acontece e o prefill da share termina **depois** do primeiro render no modo standalone → `TypeError: jsx is not a function` |
 | `react-router-dom` | `singleton: true` | widgets usam `<Link>` no contexto do shell; shells e remotes precisam ler a mesma árvore de rotas |
 | `@microstore/cart-store` | `singleton: true` | **UMA** store: badge, carrinho e checkout veem o mesmo estado |
 | `@microstore/event-bus` | `singleton: true` | emissores e ouvintes no mesmo barramento |
@@ -90,6 +91,7 @@ Mesmo mecanismo protege o event-bus (`__MICROSTORE_EVENT_BUS_IDS__`).
 | Sintoma | Causa clássica |
 |---|---|
 | `Invalid hook call` | react/react-dom duplicados (faltou `singleton` ou uma app embalou o próprio) |
+| `TypeError: jsx is not a function` no standalone | `react/jsx-runtime` sem `eager: true` — a share é materializada só sob demanda e perde a corrida contra o primeiro render |
 | Badge some ao navegar | duas stores (uma no header, outra na página) |
 | Toast que nunca apareca | dois buses (quem emite não é quem escuta) |
 | `Link` que navega mas a URL "não cola" | dois react-routers com contexts diferentes |

@@ -22,7 +22,6 @@ import {
   MfeLink,
   Price,
   formatCurrency,
-  productGradient,
 } from '@microstore/ui';
 import { CircleCheckIcon, ReceiptTextIcon } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
@@ -93,7 +92,7 @@ export function CheckoutPage() {
     return (
       <div data-mfe="checkout" className="mx-auto max-w-lg">
         <Card className="items-center p-10 text-center">
-          <CircleCheckIcon className="size-12 text-success-600" aria-hidden />
+          <CircleCheckIcon className="size-12 text-success" aria-hidden />
           <h1 className="text-2xl font-bold tracking-tight">
             Pedido confirmado
           </h1>
@@ -104,7 +103,7 @@ export function CheckoutPage() {
             </code>{' '}
             foi criado pelo remote <strong>checkout</strong>.
           </p>
-          <p className="text-3xl font-bold text-primary">
+          <p className="text-3xl font-bold text-link">
             {formatCurrency(order.total)}
           </p>
           <p className="text-xs text-muted-foreground">
@@ -155,7 +154,7 @@ export function CheckoutPage() {
           <h1 className="text-2xl font-bold tracking-tight">
             Finalizar compra
           </h1>
-          <Badge variant="outline" className="font-mono font-normal">
+          <Badge variant="outline" className="font-mono font-normal" data-telemetry>
             remote checkout · :5003
           </Badge>
         </div>
@@ -165,8 +164,8 @@ export function CheckoutPage() {
         </p>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <form onSubmit={handleSubmit} noValidate className="lg:col-span-3">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <form onSubmit={handleSubmit} noValidate className="lg:col-span-2">
           <Card>
             <CardHeader>
               <h2 className="text-base leading-snug font-semibold">
@@ -250,7 +249,7 @@ export function CheckoutPage() {
           </Card>
         </form>
 
-        <Card className="h-fit lg:col-span-2">
+        <Card className="h-fit lg:col-span-1">
           <CardHeader>
             <h2 className="text-base leading-snug font-semibold">
               Seu pedido
@@ -261,8 +260,7 @@ export function CheckoutPage() {
               {items.map((item: CartItem) => (
                 <li key={item.product.id} className="flex items-center gap-3">
                   <div
-                    className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-lg"
-                    style={{ background: productGradient(item.product.hue) }}
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent text-lg"
                     aria-hidden
                   >
                     {item.product.emoji}

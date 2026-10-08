@@ -16,7 +16,6 @@ import {
   MfeLink,
   Price,
   formatCurrency,
-  productGradient,
 } from '@microstore/ui';
 import { MinusIcon, PlusIcon, ShoppingCartIcon } from 'lucide-react';
 
@@ -74,7 +73,7 @@ export function CartPage() {
       <header>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight">Carrinho</h1>
-          <Badge variant="outline" className="font-mono font-normal">
+          <Badge variant="outline" className="font-mono font-normal" data-telemetry>
             remote cart · :5002
           </Badge>
         </div>
@@ -88,63 +87,66 @@ export function CartPage() {
         <ul className="flex flex-col gap-3 lg:col-span-2">
           {items.map(({ product, qty }) => (
             <li key={product.id}>
-              <Card size="sm" className="flex-row px-4">
-                <div
-                  className="grid h-16 w-16 shrink-0 place-items-center rounded-xl text-2xl"
-                  style={{ background: productGradient(product.hue) }}
-                  aria-hidden
-                >
-                  {product.emoji}
+              <Card size="sm" className="px-4 lg:flex-row lg:items-center">
+                <div className="flex min-w-0 flex-1 items-center gap-4">
+                  <div
+                    className="grid size-16 shrink-0 place-items-center rounded-xl bg-accent text-2xl"
+                    aria-hidden
+                  >
+                    {product.emoji}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{product.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatCurrency(product.price)} · unidade
+                    </p>
+                  </div>
                 </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{product.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatCurrency(product.price)} · unidade
-                  </p>
-                </div>
+                <div className="flex flex-wrap items-center justify-between gap-3 lg:shrink-0 lg:flex-nowrap lg:justify-end">
+                  <div className="flex shrink-0 items-center overflow-hidden rounded-lg border border-border">
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => changeQty(product.id, qty - 1)}
+                      aria-label={`Diminuir quantidade de ${product.name}`}
+                    >
+                      <MinusIcon />
+                    </Button>
+                    <span className="w-8 text-center text-sm font-semibold tabular-nums">
+                      {qty}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      disabled={qty >= product.stock}
+                      onClick={() => changeQty(product.id, qty + 1)}
+                      aria-label={
+                        qty >= product.stock
+                          ? `Estoque máximo de ${product.name} no carrinho`
+                          : `Aumentar quantidade de ${product.name}`
+                      }
+                    >
+                      <PlusIcon />
+                    </Button>
+                  </div>
 
-                <div className="flex shrink-0 items-center overflow-hidden rounded-lg border border-border">
+                  <Price
+                    value={product.price * qty}
+                    className="text-right text-sm"
+                  />
+
                   <Button
                     variant="ghost"
-                    size="icon-sm"
-                    onClick={() => changeQty(product.id, qty - 1)}
-                    aria-label={`Diminuir quantidade de ${product.name}`}
+                    size="sm"
+                    onClick={() => handleRemove(product.id)}
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    aria-label={`Remover ${product.name} do carrinho`}
                   >
-                    <MinusIcon />
-                  </Button>
-                  <span className="w-8 text-center text-sm font-semibold tabular-nums">
-                    {qty}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    disabled={qty >= product.stock}
-                    onClick={() => changeQty(product.id, qty + 1)}
-                    aria-label={
-                      qty >= product.stock
-                        ? `Estoque máximo de ${product.name} no carrinho`
-                        : `Aumentar quantidade de ${product.name}`
-                    }
-                  >
-                    <PlusIcon />
+                    Remover
                   </Button>
                 </div>
-
-                <Price
-                  value={product.price * qty}
-                  className="w-28 shrink-0 text-right text-sm"
-                />
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemove(product.id)}
-                  className="text-danger-500 hover:bg-danger-500/10 hover:text-danger-500"
-                  aria-label={`Remover ${product.name} do carrinho`}
-                >
-                  Remover
-                </Button>
               </Card>
             </li>
           ))}
@@ -164,7 +166,7 @@ export function CartPage() {
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <dt>Frete</dt>
-                <dd className="font-medium text-success-600">Grátis</dd>
+                <dd className="font-medium text-success">Grátis</dd>
               </div>
               <div className="flex justify-between border-t border-border pt-2 text-base font-bold">
                 <dt>Total</dt>
@@ -182,7 +184,7 @@ export function CartPage() {
               variant="ghost"
               size="sm"
               onClick={handleClear}
-              className="w-full text-muted-foreground hover:text-danger-500"
+              className="w-full text-muted-foreground hover:text-destructive"
             >
               Esvaziar carrinho
             </Button>

@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { MiniCartWidget } from '../remotes/widgets';
 import { StatusChips } from '../components/StatusChips';
+import { TelemetryToggle } from './TelemetryToggle';
 import { ThemeToggle } from './ThemeToggle';
 
 const navItems = [
@@ -18,13 +19,16 @@ export function Header() {
           to="/"
           className="text-lg font-bold tracking-tight text-foreground"
         >
-          <span className="text-primary">Micro</span>Store
+          <span className="text-link">Micro</span>Store
           <span className="ml-2 rounded-md bg-accent px-1.5 py-0.5 align-middle text-[10px] font-semibold tracking-wide text-accent-foreground uppercase">
             POC MFE
           </span>
         </NavLink>
 
-        <nav aria-label="Principal" className="flex gap-1 text-sm font-medium">
+        <nav
+          aria-label="Principal"
+          className="order-last flex w-full gap-1 text-sm font-medium md:order-none md:w-auto"
+        >
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -46,6 +50,7 @@ export function Header() {
         <div className="ml-auto flex items-center gap-2">
           <StatusChips />
           <MiniCartWidget />
+          <TelemetryToggle />
           <ThemeToggle />
         </div>
       </div>

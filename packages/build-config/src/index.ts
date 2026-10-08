@@ -17,6 +17,7 @@ export const SHARED_RESOLVE_ALIAS: Record<string, string> = {
 export interface SharedModuleConfig {
   singleton: boolean;
   requiredVersion?: string;
+  eager?: boolean;
 }
 
 /**
@@ -28,6 +29,10 @@ export interface SharedModuleConfig {
  * O que é compartilhado (e por quê):
  * - react / react-dom      → singleton obrigatório (estado de hooks quebraria)
  * - react-dom/             → prefixo com barra cobre submódulos (react-dom/client)
+ * - react/jsx-runtime      → consumido pelos deps pré-bundlados (base-ui), nunca
+ *   por source file; eager: true força o materialize no init do container
+ *   senão o prefill acontece depois do primeiro render no modo standalone
+ *   e o virtual module exporta jsx undefined ("jsx is not a function")
  * - react-router-dom        → widgets usam <Link> no contexto do shell
  * - @microstore/cart-store  → UMA instância da store em todos os MFEs
  * - @microstore/event-bus   → emissores e ouvintes no mesmo barramento
@@ -41,6 +46,11 @@ export interface SharedModuleConfig {
 export function createSharedConfig(): Record<string, SharedModuleConfig> {
   return {
     react: { singleton: true, requiredVersion: '^19.3.0' },
+    'react/jsx-runtime': {
+      singleton: true,
+      requiredVersion: '^19.3.0',
+      eager: true,
+    },
     'react-dom': { singleton: true, requiredVersion: '^19.3.0' },
     'react-dom/': { singleton: true, requiredVersion: '^19.3.0' },
     'react-router-dom': { singleton: true, requiredVersion: '^7.18.0' },

@@ -63,6 +63,7 @@ export function StatusChips() {
 
   return (
     <div
+      data-telemetry
       className="hidden items-center gap-2 xl:flex"
       aria-label="Status dos microfrontends"
     >

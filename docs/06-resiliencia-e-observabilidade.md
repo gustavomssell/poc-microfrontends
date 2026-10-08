@@ -47,6 +47,11 @@ importa a **store** (package compartilhado). Resiliência sem acoplamento.
   widget que falhou;
 - **`state:` / `bus:`** — contagem de instâncias da store e do bus
   ([04 — Shared deps](./04-shared-deps-e-singletons.md));
+- **modo avaliador** — o botão de atividade no header alterna a exibição
+  da telemetria (chips acima, portas do rodapé, badges `remote · :porta`).
+  A preferência vira a classe `telemetry-off` no `<html>` e o CSS esconde
+  os elementos `[data-telemetry]` — mesma engenharia do dark mode: um
+  toggle no shell alcança os 4 apps porque compartilham o documento.
 
 Quando um remote morre, o evento `remote:status` também dispara um toast
 no shell (via event-bus) — falha vira sinal, não silêncio.

@@ -1,5 +1,5 @@
 import type { Product } from '@microstore/contracts';
-import { Card, CardContent, Price, productGradient } from '@microstore/ui';
+import { Card, CardContent, Price } from '@microstore/ui';
 import { Badge } from '@microstore/ui';
 import { Link } from 'react-router-dom';
 import { AddToCartButton } from './AddToCartButton';
@@ -9,8 +9,7 @@ export function ProductCard({ product }: { product: Product }) {
     <Card className="gap-0 py-0">
       <Link
         to={`/${product.id}`}
-        className="relative block h-36"
-        style={{ background: productGradient(product.hue) }}
+        className="relative block h-36 bg-accent"
         aria-label={`Ver detalhes de ${product.name}`}
       >
         <span
@@ -30,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
       <CardContent className="flex flex-1 flex-col p-4">
         <Link
           to={`/${product.id}`}
-          className="font-medium text-foreground hover:text-primary"
+          className="font-medium text-foreground hover:text-link"
         >
           {product.name}
         </Link>

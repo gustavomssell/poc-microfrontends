@@ -2,6 +2,7 @@
     "name":  "poc-microfrontends",
     "version":  "0.1.0",
     "private":  true,
+    "license":  "MIT",
     "type":  "module",
     "description":  "POC de microfrontends com Vite, React, Tailwind e Module Federation 2.0",
     "workspaces":  [

@@ -20,12 +20,26 @@ import { CatalogApp, CartApp, CheckoutApp } from './remotes/apps';
 function RouterSync() {
   const location = useLocation();
   useEffect(() => {
-    window.dispatchEvent(
-      new PopStateEvent('popstate', { state: window.history.state }),
-    );
+    // Adiado para depois do commit: o remote que está saindo precisa ser
+    // desmontado antes, senão o <Router> dele avisa que o basename não bate.
+    const t = setTimeout(() => {
+      window.dispatchEvent(
+        new PopStateEvent('popstate', { state: window.history.state }),
+      );
+    }, 0);
+    return () => clearTimeout(t);
   }, [location.pathname, location.search, location.hash]);
   return null;
 }
+
+/**
+ * Prefixo do deploy (GitHub Pages etc.) — `VITE_ROUTER_PREFIX` com o mesmo
+ * valor em todos os apps; vazio em dev, quando as rotas vivem na raiz.
+ */
+const DEPLOY_PREFIX = (import.meta.env.VITE_ROUTER_PREFIX ?? '').replace(
+  /\/+$/,
+  '',
+);
 
 /**
  * O shell é o DONO das rotas. Os remotes são montados em /catalog, /cart e
@@ -44,19 +58,24 @@ export default function App() {
       storageKey="microstore-theme"
     >
       <TooltipProvider delay={300}>
-        <BrowserRouter>
+        <BrowserRouter basename={DEPLOY_PREFIX || undefined}>
           <RouterSync />
           <Routes>
             <Route element={<Layout />}>
               <Route path="/" element={<HomePage />} />
               <Route
                 path="/catalog/*"
-                element={<CatalogApp basename="/catalog" />}
+                element={<CatalogApp basename={`${DEPLOY_PREFIX}/catalog`} />}
               />
-              <Route path="/cart/*" element={<CartApp basename="/cart" />} />
+              <Route
+                path="/cart/*"
+                element={<CartApp basename={`${DEPLOY_PREFIX}/cart`} />}
+              />
               <Route
                 path="/checkout/*"
-                element={<CheckoutApp basename="/checkout" />}
+                element={
+                  <CheckoutApp basename={`${DEPLOY_PREFIX}/checkout`} />
+                }
               />
               <Route path="*" element={<NotFoundPage />} />
             </Route>

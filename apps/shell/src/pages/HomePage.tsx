@@ -35,7 +35,7 @@ function CompositionCard({ remote }: { remote: RemoteName | 'shell' }) {
             Host: layout, navegação, roteamento, slots e fallbacks. Não expõe
             nada.
           </p>
-          <p className="text-xs font-medium text-primary">
+          <p className="text-xs font-medium text-link">
             App local (não é remote)
           </p>
         </CardContent>
@@ -93,10 +93,10 @@ export function HomePage() {
           com estado compartilhado, contratos tipados e falhas isoladas.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link to="/catalog" className={buttonVariants()}>
+          <Link to="/catalog" className={buttonVariants({ variant: 'secondary' })}>
             Explorar catálogo
           </Link>
-          <Link to="/checkout" className={buttonVariants({ variant: 'secondary' })}>
+          <Link to="/checkout" className={buttonVariants({ variant: 'inverse' })}>
             Ir para o checkout
           </Link>
         </div>
@@ -116,7 +116,7 @@ export function HomePage() {
           </div>
           <Link
             to="/catalog"
-            className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-link hover:underline"
           >
             ver todos
             <ArrowRightIcon aria-hidden />

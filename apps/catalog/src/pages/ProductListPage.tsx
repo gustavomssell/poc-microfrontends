@@ -14,7 +14,7 @@ export function ProductListPage() {
       <header>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight">Catálogo</h1>
-          <Badge variant="outline" className="font-mono font-normal">
+          <Badge variant="outline" className="font-mono font-normal" data-telemetry>
             remote catalog · :5001
           </Badge>
         </div>
